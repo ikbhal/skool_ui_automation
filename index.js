@@ -123,19 +123,12 @@ function automateDeleteAllStudents() {
 
         // Wait for the confirmation dialog to appear
         await browser.waitUntil(async () => {
-          const confirmDialog = await browser.$('.modal-content');
-          return await confirmDialog.isDisplayed();
+          const alertText = await browser.getAlertText();
+          return !!alertText;
         }, { timeout: 5000, timeoutMsg: 'Deletion confirmation dialog did not appear' });
 
-        // Click the confirm button
-        const confirmButton = await browser.$('.modal-footer .btn-danger');
-        await confirmButton.click();
-
-        // Wait for the confirmation dialog to close
-        await browser.waitUntil(async () => {
-          const confirmDialog = await browser.$('.modal-content');
-          return !(await confirmDialog.isDisplayed());
-        }, { timeout: 5000, timeoutMsg: 'Deletion confirmation dialog did not close' });
+        // Accept the alert and click OK
+        await browser.acceptAlert();
 
         // Wait for the student to be deleted
         await browser.waitUntil(async () => !(await deleteButton.isExisting()), { timeout: 5000, timeoutMsg: 'Student deletion failed' });
